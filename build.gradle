@@ -1,0 +1,150 @@
+//======================================================================
+// PROJECT
+//======================================================================
+
+group = 'com.deniz'
+
+//======================================================================
+// REPOSITORIES
+//======================================================================
+
+buildscript {
+    repositories {
+        mavenLocal()
+        maven { url "http://repo.spring.io/libs-release-remote" }
+        maven { url 'http://repo.spring.io/plugins-release' }
+        maven { url 'http://oss.jfrog.org/repo' }
+        maven { url "https://oss.sonatype.org/content/groups/public" }
+        jcenter()
+        mavenCentral()
+    }
+    dependencies {
+        classpath "io.ratpack:ratpack-gradle:$ratpackVersion"
+        classpath 'org.gradle.api.plugins:gradle-nexus-plugin:0.7.1'
+        classpath 'com.github.townsfolk:gradle-release:1.2'
+        classpath("org.springframework.boot:spring-boot-gradle-plugin:1.2.3.RELEASE")
+    }
+}
+
+repositories {
+    mavenLocal()
+    maven { url 'http://repo.spring.io/libs-release' }
+    maven { url 'http://repo.springsource.org/repo' }
+    maven { url 'http://oss.jfrog.org/repo' }
+    maven { url "https://repository.jboss.org/nexus/content/repositories/releases" }
+    mavenCentral()
+}
+
+apply plugin: 'java'
+apply plugin: "io.ratpack.ratpack-groovy"
+apply plugin: "groovy"
+apply plugin: "idea"
+apply plugin: "nexus"
+apply plugin: 'spring-boot'
+
+//======================================================================
+// CONFIGURATIONS
+//======================================================================
+
+sourceCompatibility = '1.7'
+targetCompatibility = '1.7'
+defaultTasks 'clean', 'build'
+applicationDefaultJvmArgs = [
+        "-Dio.netty.eventLoopThreads=20"
+]
+
+configurations {
+    all {
+        exclude module: 'groovy'
+    }
+    sshAntTask {
+        logging.level = LogLevel.INFO
+    }
+}
+
+
+
+idea {
+    project {
+        jdkName '1.7'
+        languageLevel '1.7'
+    }
+    module {
+        inheritOutputDirs = false
+        outputDir = compileGroovy.destinationDir
+        testOutputDir = compileTestGroovy.destinationDir
+
+    }
+}
+
+run {
+    systemProperty('environment', System.getProperty('environment'))
+    systemProperty('logback.configurationFile', System.getProperty('logback.configurationFile'))
+}
+test {
+    systemProperty('environment', 'test')
+}
+
+//======================================================================
+// DEPENDENCIES
+//======================================================================
+
+dependencies {
+    compile 'org.codehaus.groovy.modules.http-builder:http-builder:0.7.1'
+
+    // SPRING
+    compile "org.springframework:spring-core:$springVersion"
+    compile "org.springframework:spring-context:$springVersion"
+    compile "org.springframework:spring-beans:$springVersion"
+    compile("org.springframework.boot:spring-boot-starter-data-jpa")
+
+    //DB
+    compile("com.h2database:h2")
+
+    // MONGO
+    compile "com.gmongo:gmongo:1.3"
+
+    // HTTP CLIENT
+    compile 'com.ning:async-http-client:1.8.12', {
+        exclude group: 'org.slf4j'
+        exclude group: 'org.apache.httpcomponents'
+    }
+    compile 'org.apache.httpcomponents:httpasyncclient:4.0.1'
+    compile 'org.apache.httpcomponents:httpmime:4.3.4'
+    compile 'org.apache.httpcomponents:httpcore:4.3.2'
+    compile 'org.apache.httpcomponents:httpclient:4.3.4'
+
+    compile 'org.yaml:snakeyaml:1.5'
+
+    testCompile 'junit:junit:4.11'
+    testCompile 'info.cukes:cucumber-junit:1.1.7'
+    testCompile 'info.cukes:cucumber-groovy:1.1.7'
+
+    compile 'org.codehaus.groovy.modules.http-builder:http-builder:0.7.1', {
+        exclude module: "commons-logging"
+        exclude module: "xml-apis"
+        exclude module: "groovy"
+    }
+    // RATPACK
+    testCompile 'org.spockframework:spock-core:0.7-groovy-2.0', {
+        exclude module: 'groovy-all'
+    }
+
+    compile ratpack.dependency("jackson")
+    compile ratpack.dependency("rx")
+
+    compile 'org.slf4j:slf4j-api:1.7.5'
+    compile 'org.slf4j:jcl-over-slf4j:1.7.5'
+    compile 'ch.qos.logback:logback-core:1.1.2'
+    compile 'ch.qos.logback:logback-classic:1.1.2'
+
+}
+
+//======================================================================
+// TASKS
+//======================================================================
+
+task wrapper(type: Wrapper) {
+    gradleVersion = 2.0
+}
+

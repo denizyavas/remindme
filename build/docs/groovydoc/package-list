@@ -1,0 +1,15 @@
+com.deniz.ratpack.handlers.agency
+com.deniz.ratpack.handlers.agency.domain
+com.deniz.ratpack.handlers.customer
+com.deniz.ratpack.handlers.customer.domain
+com.deniz.ratpack.handlers.monitoring
+com.deniz.ratpack.http
+com.deniz.ratpack.monitoring
+com.deniz.ratpack.process
+com.deniz.remindme
+com.deniz.remindme.business
+com.deniz.remindme.business.domain
+com.deniz.remindme.mongo
+com.deniz.remindme.persistence
+com.deniz.remindme.persistence.entity
+com.deniz.remindme.persistence.entity.enums
